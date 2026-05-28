@@ -1,4 +1,5 @@
-import { useEffect, useState, useMemo, FormEvent } from 'react';
+
+import React, { useEffect, useState, useMemo, FormEvent } from 'react';
 import {
   signInWithPopup,
   GoogleAuthProvider,
@@ -725,7 +726,7 @@ export default function App() {
           </div>
 
           <div className="mt-12 text-[#5F7D6D]/70 text-xs font-serif max-w-md">
-            Built with respect for human imagination. Powered by Google AI Studio and Firestore database.
+            Built with respect for human imagination. Powered by Firestore database.
           </div>
         </section>
       )}
@@ -1360,10 +1361,8 @@ export default function App() {
       {/* Handcrafted footer matching constraints */}
       <footer id="app-footer" className="mt-auto border-t border-[#8D7C6E]/10 bg-[#FAF7F2] py-6 text-center text-[#5F7D6D]/80 text-xs font-serif">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p>© 2026 Cozy Anime Watch Journal. All memories are stored securely.</p>
+          <p>© {new Date().getFullYear()} angewonk. All memories are stored securely.</p>
           <p className="flex items-center gap-1">
-            <span>Powered by</span>
-            <span className="font-semibold text-[#2C3E35]">Cloud Firestore Databases</span>
           </p>
         </div>
       </footer>
