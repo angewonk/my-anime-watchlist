@@ -1,0 +1,6 @@
+{
+  "name": "Anime Tracker",
+  "description": "A beautiful Ghibli-themed anime tracker supporting search, watch status, user scores, and private thoughts/notes, synced with Firebase database.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

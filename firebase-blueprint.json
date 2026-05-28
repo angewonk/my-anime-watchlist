@@ -1,0 +1,69 @@
+{
+  "entities": {
+    "AnimeTrack": {
+      "title": "AnimeTrack",
+      "description": "Represents an anime tracked by a user with watch status and rating.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The UID of the user who is tracking this anime."
+        },
+        "animeId": {
+          "type": "string",
+          "description": "The external ID (e.g., Jikan API MAL ID) of the anime."
+        },
+        "title": {
+          "type": "string",
+          "description": "The English or romaji title of the anime."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "The poster image URL of the anime."
+        },
+        "animeType": {
+          "type": "string",
+          "description": "The medium type, e.g., Movie, TV."
+        },
+        "episodesCount": {
+          "type": "number",
+          "description": "Total count of episodes."
+        },
+        "episodesWatched": {
+          "type": "number",
+          "description": "Number of episodes watched by the user."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["watching", "completed", "planning", "dropped", "on_hold"],
+          "description": "Status of watching (e.g., currently watching, completed, planned to watch)."
+        },
+        "score": {
+          "type": "number",
+          "description": "User's score rating from 1 to 10."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Personal journal notes, thoughts, or comments."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of record creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of record updates."
+        }
+      },
+      "required": ["userId", "animeId", "title", "status", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/animeTracks/{trackId}": {
+      "schema": "AnimeTrack",
+      "description": "Collection of tracked anime records for each user."
+    }
+  }
+}

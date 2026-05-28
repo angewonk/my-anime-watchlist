@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Global Safety Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 3. Entity-Specific Validator
+    function isValidAnimeTrack(data) {
+      return data.keys().hasAll(['userId', 'animeId', 'title', 'imageUrl', 'animeType', 'episodesCount', 'episodesWatched', 'status', 'score', 'notes', 'createdAt', 'updatedAt'])
+        && data.keys().size() == 12
+        && data.userId is string
+        && data.userId == request.auth.uid
+        && data.animeId is string
+        && data.animeId.size() <= 64
+        && data.title is string
+        && data.title.size() <= 256
+        && data.imageUrl is string
+        && data.imageUrl.size() <= 1024
+        && data.animeType is string
+        && data.animeType.size() <= 32
+        && data.episodesCount is number
+        && data.episodesCount >= 0
+        && data.episodesWatched is number
+        && data.episodesWatched >= 0
+        && data.status is string
+        && data.status in ['watching', 'completed', 'planning', 'dropped', 'on_hold']
+        && data.score is number
+        && data.score >= 0
+        && data.score <= 10
+        && data.notes is string
+        && data.notes.size() <= 5000;
+    }
+
+    // 4. Secure Path Match Blocks
+    match /animeTracks/{trackId} {
+      // Secure list query and individual document fetch
+      allow get, list: if isSignedIn() && existing().userId == request.auth.uid;
+
+      // Create operation with strict path and data verification
+      allow create: if isSignedIn()
+        && isValidId(trackId)
+        && isValidAnimeTrack(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      // Update operation with immutability guards & field action check
+      allow update: if isSignedIn()
+        && isValidId(trackId)
+        && isValidAnimeTrack(incoming())
+        && incoming().userId == resource.data.userId
+        && incoming().animeId == resource.data.animeId
+        && incoming().createdAt == resource.data.createdAt
+        && incoming().updatedAt == request.time
+        && (
+          incoming().diff(resource.data).affectedKeys().hasAny(['status', 'episodesWatched', 'score', 'notes', 'updatedAt'])
+        );
+
+      // Delete operation
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+  }
+}
